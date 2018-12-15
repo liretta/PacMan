@@ -23,10 +23,14 @@ Board::Board()
 	pacman.StartInitialize(startPacmanPosition);
 	ghost1.StartInitialize(startGoust1Position);
 	ghost2.StartInitialize(startGoust2Position);
-	mpGameOn = true;
 	mpGamerStatus = START;
 };
 
+void Board::StartGame()
+{
+	mpGameOn = true;
+	mpGamerStatus = START;
+}
 void Board::InitStartBoard(Point &startPacmanPosition, Point &startGhost1Position, Point &startGhost2POsition)
 {
 	mCurTreasureCount = TREASURECOUNTSTART;
@@ -307,6 +311,7 @@ void Board::Draw(HDC hDC, HWND hWnd)
 				break;
 			}
 		}
+	ReleaseDC(hWnd, hdc);
 
 };
 
@@ -676,7 +681,7 @@ void Board::DrawLoser(HDC hDC, HWND hWnd)
 
 void Board::DrawStart(HDC hDc, HWND hWnd)
 {
-	MessageBox(hWnd, (LPCTSTR)L"Start screen ", (LPCWSTR)L"Start screen", MB_OK);
+	MessageBox(hWnd, (LPCTSTR)L"Press *PLAY* to start ", (LPCWSTR)L"Welcome to Pacman!", MB_OK);
 };
 
 void Board::SetPacmanDirections(Direction NewDirect)

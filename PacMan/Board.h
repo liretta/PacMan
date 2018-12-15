@@ -28,18 +28,18 @@ private:
 	void DrawWinner(HDC hDC, HWND hWnd); //draw winner-screen with congratulation
 	void DrawLoser(HDC hDC, HWND hWnd); //draw loser-screen with "Game over"
 	void DrawStart(HDC hDc, HWND hWnd);
-	
+	void MovePacman(HWND hWnd);//pass result of checkCurObject to pacman's move-function
+	void MoveGost1(HWND hWnd); //we need two different function for different logic 1st & 2nd ghost
+	void MoveGost2(HWND hWnd); //we need two different function for different logic 1st & 2nd ghost
 
 public:
 	Board();
 	~Board();
+	void StartGame();
 	bool IsGameOn();
 	void NewLevelGenerate() {}; //method for generate new labirint on board in future. Now method body is empty
 	void Draw(HDC hDC, HWND hWnd);
 	void DrawFinal(HDC hDC, HWND hWnd);
-	void MovePacman(HWND hWnd);//pass result of checkCurObject to pacman's move-function
-	void MoveGost1(HWND hWnd); //we need two different function for different logic 1st & 2nd ghost
-	void MoveGost2(HWND hWnd); //we need two different function for different logic 1st & 2nd ghost
 	void SetPacman(Point NewBoxPoint) {}; //set new pacman location
 	void SetPacmanDirections(Direction NewDirect); //set new pacman direction after key-pressed
 	void SetGhost(int GoustNumber, Point NewBoxPoint) {}; //set new ghost position
