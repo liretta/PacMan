@@ -44,5 +44,6 @@ public:
 	void SetPacmanDirections(Direction NewDirect); //set new pacman direction after key-pressed
 	void SetGhost(int GoustNumber, Point NewBoxPoint) {}; //set new ghost position
 	Objects GetCurObject(Point CheckBoxPoint); //get object in the specified position
+	void Move(HWND hWnd);//TEST MOVE ALL
 };
 

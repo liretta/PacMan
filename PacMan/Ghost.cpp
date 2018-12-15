@@ -123,9 +123,10 @@ bool ObjectGhost::Move(Objects NextObject, Point& NewBoxPosition, bool &GameStat
 	break;
 	case STARTPOINT:
 	{
-		mpCurBox.y = BOARDWIDTH - 2; //pacman stay on same line, but moving to the another side of this line,
-		mpCurPoint.top = mpCurBox.y*BOXSIZE; //current coordinate in pixel
-		mpCurPoint.left = mpCurBox.x*BOXSIZE;
+		//pacman stay on same line, but moving to the another side of this line,
+		mpCurBox.x = BOARDWIDTH - 2;
+		mpCurPoint.top = mpCurBox.x*BOXSIZE; //current coordinate in pixel
+		mpCurPoint.left = mpCurBox.y*BOXSIZE;
 		mpCurPoint.right = mpCurPoint.left + BOXSIZE;
 		mpCurPoint.bottom = mpCurPoint.top + BOXSIZE;
 		return true;
@@ -133,9 +134,9 @@ bool ObjectGhost::Move(Objects NextObject, Point& NewBoxPosition, bool &GameStat
 	break;
 	case EXITPOINT:
 	{
-		mpCurBox.y = 1; //pacman stay on same line, but moving to the another side of this line,
-		mpCurPoint.top = mpCurBox.y*BOXSIZE; //current coordinate in pixel
-		mpCurPoint.left = mpCurBox.x*BOXSIZE;
+		mpCurBox.x = 1; //pacman stay on same line, but moving to the another side of this line,
+		mpCurPoint.top = mpCurBox.x*BOXSIZE; //current coordinate in pixel
+		mpCurPoint.left = mpCurBox.y*BOXSIZE;
 		mpCurPoint.right = mpCurPoint.left + BOXSIZE;
 		mpCurPoint.bottom = mpCurPoint.top + BOXSIZE;
 		return true;

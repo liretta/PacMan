@@ -130,7 +130,7 @@ bool ObjectPacman::Move(Objects NextObject, Point& NewBoxPosition, unsigned int 
 		break;
 	case TREASURE:
 	{
-		mCurTreasureCount = (mCurTreasureCount != 0) ? mCurTreasureCount-- : mCurTreasureCount;
+		mCurTreasureCount = (mCurTreasureCount != 0) ? --mCurTreasureCount : 0;
 		mpCurBox = NewBoxPosition;//location objects on board 
 		mpCurPoint.top = NewBoxPosition.y*BOXSIZE; //current coordinate in pixel
 		mpCurPoint.left = NewBoxPosition.x*BOXSIZE;
@@ -180,9 +180,10 @@ bool ObjectPacman::Move(Objects NextObject, Point& NewBoxPosition, unsigned int 
 		break;
 	case STARTPOINT:
 	{
-		mpCurBox.y = BOARDWIDTH - 2; //pacman stay on same line, but moving to the another side of this line,
-		mpCurPoint.top = mpCurBox.y*BOXSIZE; //current coordinate in pixel
-		mpCurPoint.left = mpCurBox.x*BOXSIZE;
+		//pacman stay on same line, but moving to the another side of this line,
+		mpCurBox.x = BOARDWIDTH - 2;
+		mpCurPoint.top = mpCurBox.x*BOXSIZE; //current coordinate in pixel
+		mpCurPoint.left = mpCurBox.y*BOXSIZE;
 		mpCurPoint.right = mpCurPoint.left + BOXSIZE;
 		mpCurPoint.bottom = mpCurPoint.top + BOXSIZE;
 		return true;
@@ -200,7 +201,7 @@ bool ObjectPacman::Move(Objects NextObject, Point& NewBoxPosition, unsigned int 
 		}
 		else
 		{
-			mpCurBox.y = 1; //pacman stay on same line, but moving to the another side of this line,
+			mpCurBox.x = 1;//pacman stay on same line, but moving to the another side of this line,
 			mpCurPoint.top = mpCurBox.y*BOXSIZE; //current coordinate in pixel
 			mpCurPoint.left = mpCurBox.x*BOXSIZE;
 			mpCurPoint.right = mpCurPoint.left + BOXSIZE;

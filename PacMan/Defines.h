@@ -20,6 +20,7 @@ struct PointTopLeft
 
 };
 
+#define TREASURECOUNTSTART 150
 
 
 #define BOXSIZE 40 //size of one box (square) in pixels

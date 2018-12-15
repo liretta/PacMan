@@ -29,6 +29,7 @@ Board::Board()
 
 void Board::InitStartBoard(Point &startPacmanPosition, Point &startGhost1Position, Point &startGhost2POsition)
 {
+	mCurTreasureCount = TREASURECOUNTSTART;
 	//location objects on board does not fall under the logic of the loop, creating map "manualy"
 	//line by line
 
@@ -355,10 +356,19 @@ void Board::MovePacman(HWND hWnd)
 	//pass next object and it's box-coordinate to pacman-move-function
 
 	if (pacman.Move(NewObject, CheckNewBox, mCurTreasureCount, mpGameOn, mpGamerStatus, hWnd)) ////change value in privios and new positions of pacman
-	{
+	{//if in current position priviosly was treasure, retun in cur position value "treasure"
+		//else in current position will be empty box
 		mpBoardObjects[CurPacman.y][CurPacman.x] = EMPTY;
-		mpBoardObjects[CheckNewBox.y][CheckNewBox.x] = PACMAN;
 
+		if (NewObject == STARTPOINT || NewObject == EXITPOINT)
+		{
+			Point NewPacmanPoint = pacman.GetCurBox();
+			mpBoardObjects[NewPacmanPoint.y][NewPacmanPoint.x] = PACMAN;
+		}
+		else
+		{
+			mpBoardObjects[CheckNewBox.y][CheckNewBox.x] = PACMAN;
+		}
 	}
 	//UpdateWindow(hWnd);
 };
@@ -415,10 +425,20 @@ void Board::MoveGost1(HWND hWnd) //silly shost - always move in random direction
 		//else in current position will be empty box
 		mpBoardObjects[CurGhostBox.y][CurGhostBox.x] = (GetCurObject(CurGhostBox) == GHOST1TREASURE) ? TREASURE : EMPTY;
 		
+		if (NewObject == STARTPOINT || NewObject == EXITPOINT)
+		{
+			Point NewChostPoint = ghost1.GetCurBox();
+			mpBoardObjects[NewChostPoint.y][NewChostPoint.x] = GHOST1;
+		}
+		else
+		{
+			mpBoardObjects[CheckNewBox.y][CheckNewBox.x] = NewObject == TREASURE ? GHOST1TREASURE : GHOST1;
+		}
+
 		//new box:
 		//if in new box treasure - newBox value will be treasure+chost
 		//else - new box value will be just ghost
-		mpBoardObjects[CheckNewBox.y][CheckNewBox.x] = NewObject == TREASURE ? GHOST1TREASURE : GHOST1;
+		//mpBoardObjects[CheckNewBox.y][CheckNewBox.x] = NewObject == TREASURE ? GHOST1TREASURE : GHOST1;
 	}
 	else
 	{
@@ -490,10 +510,19 @@ void Board::MoveGost2(HWND hWnd) //angree ghost - trying to catch pacman
 		//else in current position will be empty box
 		mpBoardObjects[CurGhostBox.y][CurGhostBox.x] = (GetCurObject(CurGhostBox) == GHOST2TREASURE) ? TREASURE : EMPTY;
 
+		if (NewObject == STARTPOINT || NewObject == EXITPOINT)
+		{
+			Point NewChostPoint = ghost2.GetCurBox();
+			mpBoardObjects[NewChostPoint.y][NewChostPoint.x] = GHOST2;
+		}
+		else
+		{
+			mpBoardObjects[CheckNewBox.y][CheckNewBox.x] = NewObject == TREASURE ? GHOST2TREASURE : GHOST2;
+		}
+
 		//new box:
 		//if in new box treasure - newBox value will be treasure+chost
 		//else - new box value will be just ghost
-		mpBoardObjects[CheckNewBox.y][CheckNewBox.x] = NewObject == TREASURE ? GHOST2TREASURE : GHOST2;
 	}
 			//if we cant move - looking for new direction
 		//TODO: !!!!here must be function for looking optimal way from ghost to pacman
@@ -658,3 +687,13 @@ void Board::SetPacmanDirections(Direction NewDirect)
 
 
 bool Board::IsGameOn() { return mpGameOn;  };
+
+void Board::Move(HWND hWnd)
+{
+	MoveGost1(hWnd);
+	MoveGost2(hWnd);
+	MovePacman(hWnd);
+	//MoveGhost1(hWnd);
+	//MoveGhost2(hWnd);
+	
+}
