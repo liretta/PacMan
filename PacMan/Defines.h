@@ -20,11 +20,13 @@ struct PointTopLeft
 
 };
 
+
+
 #define BOXSIZE 40 //size of one box (square) in pixels
 #define BOARDWIDTH 19 //width of game board - how many boxes in width
 #define BOARDHEIGHT 21 //height of game boxes - how many boxes in height
-#define	WINDOWIDTH BOARDWIDTH * BOXSIZE //window's width in pixels
-#define WINDOWHEIGHT BOARDHEIGHT *BOXSIZE //window's height in pixels
+#define	WINDOWIDTH BOARDWIDTH * BOXSIZE+BOXSIZE //window's width in pixels
+#define WINDOWHEIGHT BOARDHEIGHT *BOXSIZE+BOXSIZE //window's height in pixels
  
 
 // rgb colors
@@ -57,8 +59,8 @@ enum Objects
 	GHOST1, 
 	GHOST2, 
 	WALL, 
-	GOUST1TREASURE, //when ghost takes a box with treasure
-	GOUST2TREASURE, //when second ghost takes a box with treasure
+	GHOST1TREASURE, //when ghost takes a box with treasure
+	GHOST2TREASURE, //when second ghost takes a box with treasure
 	STARTPOINT,
 	EXITPOINT
 }; 
@@ -71,3 +73,6 @@ enum Direction
 	UP,
 	DOWN
 };
+
+enum GamerStatus {START, LOSER, WINNER};
+

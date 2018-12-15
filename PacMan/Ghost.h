@@ -11,9 +11,8 @@ public:
 	ObjectGhost();
 	~ObjectGhost();
 	void StartInitialize(Point StartBoxPosition);
-	Point GetCurBox() {};
-	PointTopLeft GetCurCoordinate() {};
 	//void Draw(const Point drawBoxCoordinate) {};
-	void Draw(HDC &hDC, HWND &hWnd);
-	//void Move() {};
+	void Draw(HDC hDC, HWND hWnd);
+	bool Move(Objects NextObject, Point& NewBoxPosition, bool &GameStatus, GamerStatus &gamer, HWND hWnd); //return true if position could be changed, Return false if ghost can't move
+	
 };
