@@ -14,11 +14,11 @@ void ObjectGhost::StartInitialize(Point startBoxPosition)
 	int right = left + BOXSIZE;
 	int bottom = top + BOXSIZE;
 	mpCurPoint = { top, left, right, bottom };
-	//int tempDirection = rand() % 4; //randrom direction for chost
-	//mpCurDirection = (Direction) tempDirection;
+	int tempDirection = rand() % 4; //randrom direction for chost
+	mpCurDirection = (Direction) tempDirection;
 
 	//TEST: direction 
-	mpCurDirection = RIGHT;
+	//mpCurDirection = RIGHT;
 
 };
 
@@ -146,7 +146,7 @@ bool ObjectGhost::Move(Objects NextObject, Point& NewBoxPosition, bool &GameStat
 	{
 		gamer = LOSER;
 		GameStatus = false;
-		MessageBox(hWnd, (LPCTSTR)L"OH, NO! YOU ARE DIED :( ", (LPCWSTR)L"Game over", MB_OK);
+		//MessageBox(hWnd, (LPCTSTR)L"OH, NO! YOU ARE DIED :( ", (LPCWSTR)L"Game over", MB_OK);
 		return false;
 	}
 	default:

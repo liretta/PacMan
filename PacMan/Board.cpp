@@ -26,6 +26,20 @@ Board::Board()
 	mpGamerStatus = START;
 };
 
+void Board::NewLevelGenerate()
+{
+	Point startPacmanPosition{ 0,0 };
+	Point startGoust1Position{ 0,0 };
+	Point startGoust2Position{ 0,0 };
+	InitStartBoard(startPacmanPosition, startGoust1Position, startGoust2Position);
+
+	//create pacman and chosts
+	pacman.StartInitialize(startPacmanPosition);
+	ghost1.StartInitialize(startGoust1Position);
+	ghost2.StartInitialize(startGoust2Position);
+	mpGamerStatus = START;
+
+}
 void Board::StartGame()
 {
 	mpGameOn = true;
@@ -255,13 +269,14 @@ void Board::InitStartBoard(Point &startPacmanPosition, Point &startGhost1Positio
 
 Board::~Board() 
 {
-	if (mpBoardObjects != 0)
+	if (mpBoardObjects != nullptr)
 	{
 		for (int i = 0; i < BOARDHEIGHT;++i)
 			delete [] mpBoardObjects[i];
 
 		delete[] mpBoardObjects;
 	}
+	mpBoardObjects = nullptr;
 };
 
 	//void NewLevelGenerate() {}; //method for generate new labirint on board in future. Now method body is empty
@@ -282,6 +297,7 @@ void Board::Draw(HDC hDC, HWND hWnd)
 			}
 			break;
 			case EMPTY:
+				DrawEmpty(hdc, hWnd, { j,i });
 				break;
 			case PACMAN:
 				pacman.Draw(hdc, hWnd);
@@ -382,6 +398,7 @@ void Board::MovePacman(HWND hWnd)
 
 void Board::MoveGost1(HWND hWnd) //silly shost - always move in random direction
 {
+
 	//check, what object there is in nex box on pacman's road
 	Point CurGhostBox = ghost1.GetCurBox();
 	Direction CurDirect = ghost1.GetCurDirection();
@@ -454,8 +471,9 @@ void Board::MoveGost1(HWND hWnd) //silly shost - always move in random direction
 		while (newDirection == CurDirect)
 		{
 			newDirection = static_cast<Direction>(rand() % 4);
-			ghost1.SetNewDirection(newDirection);
+			
 		}
+		ghost1.SetNewDirection(newDirection);
 
 		//Direction newDirection = static_cast<Direction>(rand() % 4);
 		//ghost1.SetNewDirection(newDirection);
@@ -529,11 +547,20 @@ void Board::MoveGost2(HWND hWnd) //angree ghost - trying to catch pacman
 		//if in new box treasure - newBox value will be treasure+chost
 		//else - new box value will be just ghost
 	}
-			//if we cant move - looking for new direction
-		//TODO: !!!!here must be function for looking optimal way from ghost to pacman
-		Direction newDirection = static_cast<Direction>(rand() % 4);
+	else
+	{
+		//if we cant move - looking for new direction
+	//TODO: !!!!here must be function for looking optimal way from ghost to pacman
+	/*Direction newDirection = static_cast<Direction>(rand() % 4);
+	ghost2.SetNewDirection(newDirection);*/
+		Direction newDirection = CurDirect;
+		while (newDirection == CurDirect)
+		{
+			newDirection = static_cast<Direction>(rand() % 4);
+
+		}
 		ghost2.SetNewDirection(newDirection);
-	
+	}
 };
 
 Objects Board::GetCurObject(Point CheckBoxPoint)
@@ -668,6 +695,7 @@ void Board::DrawFinal(HDC hDC, HWND hWnd)
 void Board::DrawWinner(HDC hDC, HWND hWnd)
 {
 	MessageBox(hWnd, (LPCTSTR)L"CONGRATULATION!! YOU ARE WINNER", (LPCWSTR)L"Game over", MB_OK);
+	NewLevelGenerate();
 	//need destoy window or draw new game after press "OK"
 }; 
 
@@ -676,6 +704,7 @@ void Board::DrawWinner(HDC hDC, HWND hWnd)
 void Board::DrawLoser(HDC hDC, HWND hWnd)
 {
 	MessageBox(hWnd, (LPCTSTR)L"OH, NO! YOU ARE DIED :( ", (LPCWSTR)L"Game over", MB_OK);
+	NewLevelGenerate();
 	//need destoy window or draw new game after press "OK"
 }; 
 
@@ -702,3 +731,25 @@ void Board::Move(HWND hWnd)
 	//MoveGhost2(hWnd);
 	
 }
+
+void Board::DrawEmpty(HDC hDC, HWND hWnd, Point CurBoxPosition)
+{
+	HDC hdc = hDC;
+	HBRUSH hBr;
+	HBRUSH hOldBr;
+	hBr = CreateSolidBrush(BLACK);
+	hOldBr = (HBRUSH)SelectObject(hdc, hBr);
+
+	int x = CurBoxPosition.x*BOXSIZE,
+		y = CurBoxPosition.y*BOXSIZE,
+		x2 = x + BOXSIZE,
+		y2 = y + BOXSIZE;
+
+	Rectangle(hdc, x, y, x2, y2);
+
+	SelectObject(hdc, hOldBr);
+	DeleteObject(hBr);
+	//DeleteObject(hOldBr);
+	//ReleaseDC(hWnd, hdc);
+
+};

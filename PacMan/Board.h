@@ -22,6 +22,7 @@ private:
 	void InitStartBoard(Point &startPacmanPosition, Point &startGhost1Position, Point &startGhost2POsition);
 	//pass to function empty variable for save box-position of pacman & chosts. It need to create object "Pacman" & Chost 
 	void DrawWall(HDC hDC, HWND hWnd, Point CurBoxPosition); //draw wall on board
+	void DrawEmpty(HDC hDC, HWND hWnd, Point CurBoxPosition); //draw wall on board
 	void DrawTreasure(HDC hDC, HWND hWnd, Point CurBoxPosition); // draw treasure on board
 	void DrawStartPoint(HDC hDC, HWND hWnd, Point CurBoxPosition); //draw start point
 	void DrawExitPoint(HDC hDC, HWND hWnd, Point CurBoxPosition);
@@ -37,7 +38,7 @@ public:
 	~Board();
 	void StartGame();
 	bool IsGameOn();
-	void NewLevelGenerate() {}; //method for generate new labirint on board in future. Now method body is empty
+	void NewLevelGenerate(); //method for generate new labirint on board in future. Now method body equals StartBoardInit+Constructor
 	void Draw(HDC hDC, HWND hWnd);
 	void DrawFinal(HDC hDC, HWND hWnd);
 	void SetPacman(Point NewBoxPoint) {}; //set new pacman location

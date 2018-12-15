@@ -1,4 +1,6 @@
 #pragma once
+
+
 //general included files, constants and enumerations
 
 //struct point for boxes "coordinate"
