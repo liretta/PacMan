@@ -752,6 +752,8 @@ void Board::DrawFinal(HDC hDC, HWND hWnd)
 //now it is just message-box
 void Board::DrawWinner(HDC hDC, HWND hWnd)
 {
+	//UpdateWindow(hWnd);
+	DrawStart(hDC, hWnd);
 	MessageBox(hWnd, (LPCTSTR)L"CONGRATULATION!! YOU ARE WINNER", (LPCWSTR)L"Game over", MB_OK);
 	NewLevelGenerate();
 	//need destoy window or draw new game after press "OK"
@@ -761,6 +763,8 @@ void Board::DrawWinner(HDC hDC, HWND hWnd)
 //draw loser-screen with "Game over", if player lose
 void Board::DrawLoser(HDC hDC, HWND hWnd)
 {
+	//UpdateWindow(hWnd);
+	DrawStart(hDC, hWnd);
 	MessageBox(hWnd, (LPCTSTR)L"OH, NO! YOU ARE DIED :( ", (LPCWSTR)L"Game over", MB_OK);
 	NewLevelGenerate();
 	//need destoy window or draw new game after press "OK"
@@ -768,7 +772,211 @@ void Board::DrawLoser(HDC hDC, HWND hWnd)
 
 void Board::DrawStart(HDC hDc, HWND hWnd)
 {
-	MessageBox(hWnd, (LPCTSTR)L"Press *PLAY* to start ", (LPCWSTR)L"Welcome to Pacman!", MB_OK);
+	HDC hdc = hDc;
+	HBRUSH hBr;
+	HBRUSH hOldBr;
+	hBr = CreateSolidBrush(YELLOW);
+	hOldBr = (HBRUSH)SelectObject(hdc, hBr);
+	
+	//draw word "pacman"
+	//"P"
+	///////////////////////////////////////////
+	int x = 1*BOXSIZE, y = 3*BOXSIZE,
+		x2 = x + BOXSIZE,
+		y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	for (int i = 4; i < 10; ++i)
+	{
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+		Rectangle(hdc, x, y, x2, y2);
+		
+	}
+	x += BOXSIZE;
+	y = 3*BOXSIZE;
+	x2 = x + BOXSIZE;
+	y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+	Rectangle(hdc, x2, y, x2+BOXSIZE, y2);
+	x = 3 * BOXSIZE; y = 4 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+	x = 3 * BOXSIZE; y = 5 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+	x = 2 * BOXSIZE; y = 5 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	//"A"
+	///////////////////////////////////////
+	x = 4 * BOXSIZE; y = 4 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 4; i < 10; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+	
+	x = 5 * BOXSIZE; y = 3 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	x = 6 * BOXSIZE; y = 4 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 4; i < 10; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+	x = 5 * BOXSIZE; y = 6 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	//"C"
+	//////////////////////////////////////
+	x = 7 * BOXSIZE; y = 4 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 4; i < 9; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+	x = 8 * BOXSIZE; y = 3 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+	x = 8 * BOXSIZE; y = 9 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+	x = 9 * BOXSIZE; y = 4 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+	x = 9 * BOXSIZE; y = 8 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	//"M"
+	/////////////////////////////
+	x = 10 * BOXSIZE; y = 3 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 3; i < 10; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+
+	x = 12 * BOXSIZE; y = 3 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 3; i < 10; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+
+	x = 11 * BOXSIZE; y = 3 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 3; i < 6; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+	//poligon - for M 
+	int x1 = 10*BOXSIZE;
+	int y1 = 3*BOXSIZE;
+	x2 = 13*BOXSIZE;
+	y2 = 3*BOXSIZE;
+	int x3 = 11 * BOXSIZE + BOXSIZE / 2;
+	int y3 = 6 * BOXSIZE;
+	
+	POINT poly[3] = { { x1, y1 },{ x2,y2 },{ x3,y3 } };
+	SelectObject(hdc, hOldBr);
+	DeleteObject(hBr);
+
+	hBr = CreateSolidBrush(BLACK);
+	hOldBr = (HBRUSH)SelectObject(hdc, hBr);
+	Polygon(hdc, poly, 3);
+	SelectObject(hdc, hOldBr);
+	DeleteObject(hBr);
+
+	hBr = CreateSolidBrush(YELLOW);
+	hOldBr = (HBRUSH)SelectObject(hdc, hBr);
+
+	//"A"
+	///////////////////////////////////////
+	x = 13 * BOXSIZE; y = 4 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 4; i < 10; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+
+	x = 14 * BOXSIZE; y = 3 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	x = 15 * BOXSIZE; y = 4 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 4; i < 10; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+	x = 14 * BOXSIZE; y = 6 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	//"N"
+	//////////////////////
+	x = 16 * BOXSIZE; y = 3 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 3; i < 10; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+
+	x = 17 * BOXSIZE; y = 3 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 3; i < 9; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+
+	x = 18 * BOXSIZE; y = 3 * BOXSIZE; x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 3; i < 10; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+	
+	SelectObject(hdc, hOldBr);
+	DeleteObject(hBr);
+
+	hBr = CreateSolidBrush(BLACK);
+	hOldBr = (HBRUSH)SelectObject(hdc, hBr);
+
+	//poligon - for N 
+	x1 = 16 * BOXSIZE+BOXSIZE/2;
+	y1 = 3 * BOXSIZE;
+	x2 = 18 * BOXSIZE+BOXSIZE/2;
+	y2 = 9 * BOXSIZE;
+	x3 = x2;// *BOXSIZE + BOXSIZE / 2;
+	y3 = y1;// * BOXSIZE;
+
+	POINT poly2[3] = { { x1, y1 },{ x2,y2 },{ x3,y3 } };
+	Polygon(hdc, poly2, 3);
+
+	//second poligon - for N 
+	x1 = 16 * BOXSIZE + BOXSIZE / 2;
+	y1 = 3 * BOXSIZE+BOXSIZE/2;
+	x2 = 18 * BOXSIZE + BOXSIZE / 2;
+	y2 = 9 * BOXSIZE+BOXSIZE;
+	x3 = x1;// *BOXSIZE + BOXSIZE / 2;
+	y3 = y2;// * BOXSIZE;
+
+	POINT poly3[3] = { { x1, y1 },{ x2,y2 },{ x3,y3 } };
+	Polygon(hdc, poly3, 3);
+	SelectObject(hdc, hOldBr);
+	DeleteObject(hBr);
+	
+
+	/*SelectObject(hdc, hOldBr);
+	DeleteObject(hBr);*/
+
+	//MessageBox(hWnd, (LPCTSTR)L"Press *PLAY* to start ", (LPCWSTR)L"Welcome to Pacman!", MB_OK);
 };
 
 void Board::SetPacmanDirections(Direction NewDirect)
@@ -782,9 +990,9 @@ bool Board::IsGameOn() { return mpGameOn;  };
 
 void Board::Move(HWND hWnd)
 {
+	MovePacman(hWnd);
 	MoveGost1(hWnd);
 	MoveGost2(hWnd);
-	MovePacman(hWnd);
 	//MoveGhost1(hWnd);
 	//MoveGhost2(hWnd);
 	

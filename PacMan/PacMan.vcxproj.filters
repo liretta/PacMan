@@ -75,5 +75,14 @@
     <Image Include="PacMan.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="C:\Users\Admin.AdminPC\Desktop\PacMan.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="c:\users\admin.adminpc\desktop\icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="C:\Users\Admin.AdminPC\Pictures\PacMan.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
