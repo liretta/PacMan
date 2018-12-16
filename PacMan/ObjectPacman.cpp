@@ -6,6 +6,16 @@
 ObjectPacman::ObjectPacman()
 {};
 
+//   FUNCTION: StartInitialize(Point startBoxPosition)
+//
+//   PURPOSE: initialize start PacMan's position and direction
+//
+//   COMMENTS: 
+//		start pacman position determined in Board, when initialized all game map.
+//		then that start point must be passed to this function for initialize start position.
+//		Start direction always is up
+//
+
 void ObjectPacman::StartInitialize(Point startBoxPosition)
 {
 	mpCurBox = startBoxPosition;
@@ -14,14 +24,22 @@ void ObjectPacman::StartInitialize(Point startBoxPosition)
 	int right = left + BOXSIZE;
 	int bottom = top + BOXSIZE;
 	mpCurPoint = { top, left, right, bottom };
-	mpCurDirection = LEFT;//change to UP in release version
+	mpCurDirection = UP;
 
 };
 
-
 ObjectPacman::~ObjectPacman() {};
 
-void ObjectPacman::Draw(HDC hDC, HWND hWnd)
+//   FUNCTION: Draw(HDC hDC)
+//
+//   PURPOSE: Draw PacMan's figure on passed device (HDC)
+//
+//   COMMENTS: 
+//		function gets some divece context
+//		then on this divice will be drawing pacman's figure: yellow round and black mouth
+//		all coordinates are converted from user-coordinate to standard
+//
+void ObjectPacman::Draw(HDC hDC)
 {
 	HDC hdc = hDC;
 	HBRUSH hBr;
@@ -45,7 +63,6 @@ void ObjectPacman::Draw(HDC hDC, HWND hWnd)
 	int y1 = y + BOXSIZE / 2;
 	x2 = 0;
 	y2 = 0;
-	//int x2, y2; //upper bound of pacman's mouth
 	int x3, y3; //loweer border of pacman's mouth
 
 	switch (mpCurDirection)
@@ -94,28 +111,27 @@ void ObjectPacman::Draw(HDC hDC, HWND hWnd)
 
 	SelectObject(hdc, hOldBr);
 	DeleteObject(hBr);
-	//ReleaseDC(hWnd, hdc);
 };
 
-Point ObjectPacman::GetCurBox()
+//   FUNCTION: (Objects NextObject, Point& NewBoxPosition, unsigned int &mCurTreasureCount, bool &GameStatus, GamerStatus &gamer)
+//
+//   PURPOSE: try to move PacMan. always 1 step in the current direction
+//
+//   COMMENTS: 
+//		return true if position could be changed and we need to rewrite mpBoard. Return false if pacman can't move
+//1. check, what object there are in next ghost's position in current directions
+//2. if there is threasure in the next position: decrease qountity of threasure by one and change pacman's coordinate to the next box
+//new ghost's box in mpBoard must assigned as ghost+threasure 
+//it is necessary that the ghost does not eat the treasure and we could draw it after the ghost leaves
+//3. if there is ghost1 or ghost2, ghost+treasure in the next position - change game and gamer status. Game is over, gamer is loser
+//4. if there is start-point in the next position, move ghost to another side of this line - one step to exit point
+//5. if there is exit-point in the next position, check qountity of threasure. If there aren't any threaure on game map, 
+//games is winner, game is over. Else - move ghost to another side of this line - one step to start point
+//6. if wall - just update window
+//
+bool ObjectPacman::Move(Objects NextObject, Point& NewBoxPosition, unsigned int &mCurTreasureCount, bool &GameStatus, GamerStatus &gamer)
 {
-	return mpCurBox;
-};
-//PointTopLeft GetCurCoordinate();
-//void Draw(const Point drawBoxCoordinate);
-
-//try to change pacman position - always 1 step in the direction of pacman
-//return true if position could be changed and we need to rewrite mpBoardObject
-//return false if pacman can't move
-bool ObjectPacman::Move(Objects NextObject, Point& NewBoxPosition, unsigned int &mCurTreasureCount, bool &GameStatus, GamerStatus &gamer, HWND hWnd)
-{
-	//1. check, what object there are in next pacmen's position in current directions
-	//2. in switch:
-	//2.1 if threasure: treasure quontity --; assign new position to pacman
-	//3.2 if ghost1, ghost2, ghost+treasure -//- = draw game over
-	//3.3 if start-point - check, if threasure !=0, new paxcam position = exitpoint-1
-	//if treasure == 0; draw winner
-	//4.if wall - just update window.
+	
 	switch (NextObject)
 	{
 	case EMPTY:
@@ -141,10 +157,8 @@ bool ObjectPacman::Move(Objects NextObject, Point& NewBoxPosition, unsigned int 
 		break;
 	case GHOST1:
 	{	
-		//MessageBox(hWnd, (LPCTSTR)L"OH, NO! YOU ARE DIED :( ", (LPCWSTR)L"Game over", MB_OK);
 		gamer = LOSER;
 		GameStatus = false;
-		//need destoy window or draw new game after press "OK" 
 		return false;
 	}
 		break;
@@ -152,8 +166,6 @@ bool ObjectPacman::Move(Objects NextObject, Point& NewBoxPosition, unsigned int 
 	{
 		gamer = LOSER;
 		GameStatus = false;
-		//MessageBox(hWnd, (LPCTSTR)L"OH, NO! YOU ARE DIED :( ", (LPCWSTR)L"Game over", MB_OK);
-		//need destoy window or draw new game after press "OK" 
 		return false;
 	}
 		break;
@@ -164,8 +176,6 @@ bool ObjectPacman::Move(Objects NextObject, Point& NewBoxPosition, unsigned int 
 	{
 		gamer = LOSER;
 		GameStatus = false;
-		//MessageBox(hWnd, (LPCTSTR)L"OH, NO! YOU ARE DIED :( ", (LPCWSTR)L"Game over", MB_OK);
-		//need destoy window or draw new game after press "OK" 
 		return false;
 	}
 		break;
@@ -173,8 +183,6 @@ bool ObjectPacman::Move(Objects NextObject, Point& NewBoxPosition, unsigned int 
 	{
 		gamer = LOSER;
 		GameStatus = false;
-		//MessageBox(hWnd, (LPCTSTR)L"OH, NO! YOU ARE DIED :( ", (LPCWSTR)L"Game over", MB_OK);
-		//need destoy window or draw new game after press "OK" 
 		return false;
 	}
 		break;
@@ -195,8 +203,6 @@ bool ObjectPacman::Move(Objects NextObject, Point& NewBoxPosition, unsigned int 
 		{
 			gamer = WINNER;
 			GameStatus = false;
-			//MessageBox(hWnd, (LPCTSTR)L"CONGRATULATION!! YOU ARE WINNER!", (LPCWSTR)L"Game over", MB_OK);
-			//need destoy window or draw new game after press "OK" 
 			return false;
 		}
 		else
@@ -216,7 +222,6 @@ bool ObjectPacman::Move(Objects NextObject, Point& NewBoxPosition, unsigned int 
 	return false;
 }
 ;
-//void Turn(){}; //posible, function must take key-code
 
 void ObjectPacman::SetNewDirection(Direction newDirect)
 {

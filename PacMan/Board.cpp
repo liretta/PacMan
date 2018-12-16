@@ -4,14 +4,29 @@
 #include "cstdlib"
 #include "ctime"
 
+//   COMMENTS:
+//
+//        Game board is a table 19X20
+//		  each box on the table has size BOXSIZE in pixel (look #define) 
+//		  game board emplemented as two-demensional dynamic array
+//		  Pay attention: in Array first demensional (i-loop) is COLUMNS on board, second demensional (j-loop) is LINES on board
+//
 
+//   FUNCTION: Board()
+//
+//   PURPOSE: create object "board"
+//
+//   COMMENTS:
+//		Create dynamic array with values of each box on game board
+//      called Start initialize function for board and game-objects: ghosts & pacman 
+//		changed gameStatus in "START"
+//
 Board::Board()
-{//initialize start board
-
+{
 	//Create dynamic array 
 	mpBoardObjects = new Objects *[BOARDHEIGHT] {}; //column
 	for (int i = 0; i < BOARDHEIGHT; ++i)
-		mpBoardObjects[i] = new Objects[BOARDWIDTH]{}; //
+		mpBoardObjects[i] = new Objects[BOARDWIDTH]{}; //line
 	
 	//initialize start map
 	Point startPacmanPosition{ 0,0 };
@@ -19,41 +34,44 @@ Board::Board()
 	Point startGoust2Position{ 0,0 };
 	InitStartBoard(startPacmanPosition, startGoust1Position, startGoust2Position);
 	
-	//create pacman and chosts
+	//initialize pacman and chosts
 	pacman.StartInitialize(startPacmanPosition);
 	ghost1.StartInitialize(startGoust1Position);
 	ghost2.StartInitialize(startGoust2Position);
 	mpGamerStatus = START;
 };
 
-void Board::NewLevelGenerate()
-{
-	Point startPacmanPosition{ 0,0 };
-	Point startGoust1Position{ 0,0 };
-	Point startGoust2Position{ 0,0 };
-	InitStartBoard(startPacmanPosition, startGoust1Position, startGoust2Position);
 
-	//create pacman and chosts
-	pacman.StartInitialize(startPacmanPosition);
-	ghost1.StartInitialize(startGoust1Position);
-	ghost2.StartInitialize(startGoust2Position);
-	mpGamerStatus = START;
-
-}
-void Board::StartGame()
+Board::~Board()
 {
-	mpGameOn = true;
-	mpGamerStatus = START;
-}
+	if (mpBoardObjects != nullptr)
+	{
+		for (int i = 0; i < BOARDHEIGHT;++i)
+			delete[] mpBoardObjects[i];
+
+		delete[] mpBoardObjects;
+	}
+	mpBoardObjects = nullptr;
+};
+
+
+// FUNCTION: InitStartBoard(Point &startPacmanPosition, Point &startGhost1Position, Point &startGhost2POsition)
+//
+//   PURPOSE: initialize map start level 
+//
+//   COMMENTS:
+//		location objects on board does not fall under the logic of the loop, so creating map "manualy"
+//		line by line		
+//		
+//
 void Board::InitStartBoard(Point &startPacmanPosition, Point &startGhost1Position, Point &startGhost2POsition)
 {
 	mCurTreasureCount = TREASURECOUNTSTART;
-	//location objects on board does not fall under the logic of the loop, creating map "manualy"
-	//line by line
+	
 
 	//first line in wall
 	for (int j = 0; j<BOARDWIDTH; ++j)
-		mpBoardObjects[0][j] = WALL; 
+		mpBoardObjects[0][j] = WALL;
 
 	//second line
 	mpBoardObjects[1][0] = WALL;
@@ -222,7 +240,7 @@ void Board::InitStartBoard(Point &startPacmanPosition, Point &startGhost1Positio
 			if (9 == j)
 			{
 				mpBoardObjects[15][j] = PACMAN;
-				startPacmanPosition={ j,15 };
+				startPacmanPosition = { j,15 };
 			}
 			else
 				mpBoardObjects[15][j] = TREASURE;
@@ -267,25 +285,55 @@ void Board::InitStartBoard(Point &startPacmanPosition, Point &startGhost1Positio
 }
 
 
-Board::~Board() 
+//   FUNCTION: NewLevelGenerate()
+//
+//   PURPOSE: initialize new map
+//
+//   COMMENTS:
+//		pay attention! Now this function just initialize the same start board!
+//		but in future we can use this function to initialize map for new level after finished firts one
+//
+void Board::NewLevelGenerate()
 {
-	if (mpBoardObjects != nullptr)
-	{
-		for (int i = 0; i < BOARDHEIGHT;++i)
-			delete [] mpBoardObjects[i];
+	Point startPacmanPosition{ 0,0 };
+	Point startGoust1Position{ 0,0 };
+	Point startGoust2Position{ 0,0 };
+	InitStartBoard(startPacmanPosition, startGoust1Position, startGoust2Position);
 
-		delete[] mpBoardObjects;
-	}
-	mpBoardObjects = nullptr;
-};
+	//initialize pacman and chosts
+	pacman.StartInitialize(startPacmanPosition);
+	ghost1.StartInitialize(startGoust1Position);
+	ghost2.StartInitialize(startGoust2Position);
+	mpGamerStatus = START;
 
-	//void NewLevelGenerate() {}; //method for generate new labirint on board in future. Now method body is empty
+}
+
+//   FUNCTION: StartGame()
+//
+//   PURPOSE: change game and gamer status to START
+//
+//   COMMENTS:
+//		after finished first game and when player pess "PLAY" again, we use this funtion for changed all triggers to start position
+//
+void Board::StartGame()
+{
+	mpGameOn = true;
+	mpGamerStatus = START;
+}
+
+// FUNCTION: Draw(HDC hDC)
+//
+//   PURPOSE: drawing all game object to the game board
+//
+//   COMMENTS:
+//		pass through all elements of the array MpBoardObject
+//		and callednessesary draw funtion by current objects
+//		example, if current element on board-array is WALL, call Wall.Draw;
+//
 void Board::Draw(HDC hDC, HWND hWnd)
 {
 	HDC hdc = hDC;
-	//TODO: check winner/lose
-	//
-
+	
 	for(int i =0; i<BOARDHEIGHT; ++i)
 		for (int j = 0; j < BOARDWIDTH; ++j)
 		{
@@ -293,113 +341,65 @@ void Board::Draw(HDC hDC, HWND hWnd)
 			{
 			case WALL:
 			{
-				DrawWall(hdc, hWnd, { j, i });
+				DrawWall(hdc, { j, i });
 			}
 			break;
 			case EMPTY:
-				DrawEmpty(hdc, hWnd, { j,i });
+				DrawEmpty(hdc, { j,i });
 				break;
 			case PACMAN:
-				pacman.Draw(hdc, hWnd);
+				pacman.Draw(hdc);
 				break;
 			case GHOST1:
-				ghost1.Draw(hdc, hWnd);
+				ghost1.Draw(hdc);
 				break;
 			case GHOST1TREASURE:
-				ghost1.Draw(hdc, hWnd);
+				ghost1.Draw(hdc);
 				break;
 			case GHOST2:
-				ghost2.Draw(hdc, hWnd);
+				ghost2.Draw(hdc);
 				break;
 			case GHOST2TREASURE:
-				ghost2.Draw(hdc, hWnd);
+				ghost2.Draw(hdc);
 				break;
 			case TREASURE:
-				DrawTreasure(hdc, hWnd, { j, i});
+				DrawTreasure(hdc, { j, i});
 				break;
 			case STARTPOINT:
-				DrawStartPoint(hdc, hWnd, { j, i });
+				DrawStartPoint(hdc, { j, i });
 				break;
 			case EXITPOINT:
-				DrawExitPoint(hdc, hWnd, { j,i });
+				DrawExitPoint(hdc, { j,i });
 				break;
 			default:
 				break;
 			}
 		}
-	ReleaseDC(hWnd, hdc);
+	//ReleaseDC(hdc);
 
 };
 
-//TEST! Try to paint to the bitmap. Not worked!!
-//void Board::Draw(HDC hDC, HWND hWnd)
-//{
-//	HDC hdc = hDC;
-//	HDC hMemDc = CreateCompatibleDC(hdc);
-//
-//	//TODO: check winner/lose
-//	//
-//
-//	for (int i = 0; i<BOARDHEIGHT; ++i)
-//		for (int j = 0; j < BOARDWIDTH; ++j)
-//		{
-//			switch (mpBoardObjects[i][j])
-//			{
-//			case WALL:
-//			{
-//				DrawWall(hMemDc, hWnd, { j, i });
-//			}
-//			break;
-//			case EMPTY:
-//				DrawEmpty(hMemDc, hWnd, { j,i });
-//				break;
-//			case PACMAN:
-//				pacman.Draw(hMemDc, hWnd);
-//				break;
-//			case GHOST1:
-//				ghost1.Draw(hMemDc, hWnd);
-//				break;
-//			case GHOST1TREASURE:
-//				ghost1.Draw(hMemDc, hWnd);
-//				break;
-//			case GHOST2:
-//				ghost2.Draw(hMemDc, hWnd);
-//				break;
-//			case GHOST2TREASURE:
-//				ghost2.Draw(hMemDc, hWnd);
-//				break;
-//			case TREASURE:
-//				DrawTreasure(hMemDc, hWnd, { j, i });
-//				break;
-//			case STARTPOINT:
-//				DrawStartPoint(hMemDc, hWnd, { j, i });
-//				break;
-//			case EXITPOINT:
-//				DrawExitPoint(hMemDc, hWnd, { j,i });
-//				break;
-//			default:
-//				break;
-//			}
-//		}
-//	BitBlt(hdc, 0, 0, BOARDWIDTH, BOARDHEIGHT, hMemDc, 0, 0, SRCCOPY);
-//	DeleteDC(hMemDc);
-//	ReleaseDC(hWnd, hdc);
-//
-//};
 
-
-
-//pass result of checkCurObject to pacman's move-function
-void Board::MovePacman(HWND hWnd)
+// FUNCTION: MovePacman(HWND hWnd)
+//
+//   PURPOSE: looking for next Pacman position, check object in next position and assigned new values to priviosli and next box
+//
+//   COMMENTS:
+//		1.check, what object there is in next box on pacman's road.
+//		we didn't check situation, when CurDirection == 0 (start or exit point)
+//		becouse pacman never been there: if next pacman position is start or end he can: finish game, move to start position+1 or exit-position-1
+//		start and exit points are working like portal, not like a general box on board
+//		
+//		2.pass result of checkCurObject to pacman's move-function
+//		3.if funchion Move pacman retunt "true", we can move pacman and assign new value to elements on game board
+//
+//
+void Board::MovePacman()
 {
 	//check, what object there is in nex box on pacman's road
 	Point CurPacman = pacman.GetCurBox();
 	Direction CurDirect = pacman.GetCurDirection();
-
-	//we didn't check situation, when CurDirection == 0 (start or exit point)
-	//becouse pacman never been there: if next pacman position is start or end he can: finish game, move to start position+1 or exit-position-1
-	//start and exit points are working like portal, not like a general box on board
-
+	
 	//found object in next pacman's box
 	Point CheckNewBox{ 0,0 };
 	switch (CurDirect)
@@ -434,7 +434,7 @@ void Board::MovePacman(HWND hWnd)
 	Objects NewObject = GetCurObject(CheckNewBox);
 	//pass next object and it's box-coordinate to pacman-move-function
 
-	if (pacman.Move(NewObject, CheckNewBox, mCurTreasureCount, mpGameOn, mpGamerStatus, hWnd)) ////change value in privios and new positions of pacman
+	if (pacman.Move(NewObject, CheckNewBox, mCurTreasureCount, mpGameOn, mpGamerStatus)) //change value in privios and new positions of pacman
 	{//if in current position priviosly was treasure, retun in cur position value "treasure"
 		//else in current position will be empty box
 		mpBoardObjects[CurPacman.y][CurPacman.x] = EMPTY;
@@ -449,22 +449,28 @@ void Board::MovePacman(HWND hWnd)
 			mpBoardObjects[CheckNewBox.y][CheckNewBox.x] = PACMAN;
 		}
 	}
-	//UpdateWindow(hWnd);
 };
-	//void SetPacman(Point NewBoxPoint) {/*todo*/}; //set new pacman location
-	//void SetGhost(int GoustNumber, Point NewBoxPoint) {/*TODO*/}; //set new ghost position
+	
 
-void Board::MoveGost1(HWND hWnd) //silly shost - always move in random direction
+// FUNCTION: MoveGhost1(HWND hWnd)
+//
+//   PURPOSE: looking for next Ghost1 position, check object in next position and assigned new values to priviosli and next box
+//
+//   COMMENTS:
+//		this ghost changed direction only if thay can't move on
+//		1.check, what object there is in next box on chost's road.
+//		we didn't check situation, when CurDirection == 0 (start or exit point)
+//		becouse ghost never been there: if next ghost position is start or end he move to start position+1 or exit-position-1
+//		start and exit points are working like portal, not like a general box on board
+//		
+//		2.pass result of checkCurObject to Ghosts move-function
+//		3.if funchion Move ghost returned "true", we can move ghost and assign new value to elements on game board
+//
+void Board::MoveGhost1() 
 {
-
-	//check, what object there is in nex box on pacman's road
 	Point CurGhostBox = ghost1.GetCurBox();
 	Direction CurDirect = ghost1.GetCurDirection();
 	
-	//we didn't check situation, when CurDirection == 0 (start or exit point)
-	//becouse pacman never been there: if next pacman position is start or end he can: finish game, move to start position+1 or exit-position-1
-	//start and exit points are working like portal, not like a general box on board
-
 	//found object in next pacman's box
 	Point CheckNewBox{ 0,0 };
 	switch (CurDirect)
@@ -497,9 +503,7 @@ void Board::MoveGost1(HWND hWnd) //silly shost - always move in random direction
 		break;
 	}
 	Objects NewObject = GetCurObject(CheckNewBox);
-	//pass next object and it's box-coordinate to pacman-move-function
-
-	if (ghost1.Move(NewObject, CheckNewBox, mpGameOn, mpGamerStatus, hWnd)) //change value in privios and in the new positions of ghost
+	if (ghost1.Move(NewObject, CheckNewBox, mpGameOn, mpGamerStatus)) //change value in privios and in the new positions of ghost
 	{
 		//if in current position priviosly was treasure, retun in cur position value "treasure"
 		//else in current position will be empty box
@@ -514,17 +518,10 @@ void Board::MoveGost1(HWND hWnd) //silly shost - always move in random direction
 		{
 			mpBoardObjects[CheckNewBox.y][CheckNewBox.x] = NewObject == TREASURE ? GHOST1TREASURE : GHOST1;
 		}
-
-		//new box:
-		//if in new box treasure - newBox value will be treasure+chost
-		//else - new box value will be just ghost
-		//mpBoardObjects[CheckNewBox.y][CheckNewBox.x] = NewObject == TREASURE ? GHOST1TREASURE : GHOST1;
 	}
 	else
 	{
-		//ghost1 is a silly ghost - he always move in random direction
-		//so, if he can move in current direction, we need to change direction in to random one
-		//and ghost can't move back
+		//if he can move in current direction, we need to change direction in to random one
 		Direction newDirection = CurDirect;
 		while (newDirection == CurDirect)
 		{
@@ -532,24 +529,30 @@ void Board::MoveGost1(HWND hWnd) //silly shost - always move in random direction
 			
 		}
 		ghost1.SetNewDirection(newDirection);
-
-		//Direction newDirection = static_cast<Direction>(rand() % 4);
-		//ghost1.SetNewDirection(newDirection);
 	}
-
-
 };
 
-void Board::MoveGost2(HWND hWnd) //angree ghost - trying to catch pacman
+
+// FUNCTION: MoveGhost2(HWND hWnd)
+//
+//   PURPOSE: looking for next Ghost2 position, check object in next position and assigned new values to priviosli and next box
+//
+//   COMMENTS:
+//		ATTENTION!! Now ghost2 also move as ghost 1. But we need two different function in future
+//		if we needed angree ghost on nest lvl
+//		1.check, what object there is in next box on chost's road.
+//		we didn't check situation, when CurDirection == 0 (start or exit point)
+//		becouse ghost never been there: if next ghost position is start or end he move to start position+1 or exit-position-1
+//		start and exit points are working like portal, not like a general box on board
+//		
+//		2.pass result of checkCurObject to Ghosts move-function
+//		3.if funchion Move ghost returned "true", we can move ghost and assign new value to elements on game board
+//
+void Board::MoveGhost2() 
 {
-	//ATTENTION!! Now ghost2 also move in random direction
 	//check, what object there is in nex box on pacman's road
 	Point CurGhostBox = ghost2.GetCurBox();
 	Direction CurDirect = ghost2.GetCurDirection();
-
-	//we didn't check situation, when CurDirection == 0 (start or exit point)
-	//becouse pacman never been there: if next pacman position is start or end he can: finish game, move to start position+1 or exit-position-1
-	//start and exit points are working like portal, not like a general box on board
 
 	//found object in next pacman's box
 	Point CheckNewBox{ 0,0 };
@@ -583,9 +586,8 @@ void Board::MoveGost2(HWND hWnd) //angree ghost - trying to catch pacman
 		break;
 	}
 	Objects NewObject = GetCurObject(CheckNewBox);
-	//pass next object and it's box-coordinate to pacman-move-function
 
-	if (ghost2.Move(NewObject, CheckNewBox, mpGameOn, mpGamerStatus, hWnd)) //change value in privios and in the new positions of ghost
+	if (ghost2.Move(NewObject, CheckNewBox, mpGameOn, mpGamerStatus)) //change value in privios and in the new positions of ghost
 	{
 		//if in current position priviosly was treasure, retun in cur position value "treasure"
 		//else in current position will be empty box
@@ -600,17 +602,10 @@ void Board::MoveGost2(HWND hWnd) //angree ghost - trying to catch pacman
 		{
 			mpBoardObjects[CheckNewBox.y][CheckNewBox.x] = NewObject == TREASURE ? GHOST2TREASURE : GHOST2;
 		}
-
-		//new box:
-		//if in new box treasure - newBox value will be treasure+chost
-		//else - new box value will be just ghost
 	}
 	else
 	{
-		//if we cant move - looking for new direction
-	//TODO: !!!!here must be function for looking optimal way from ghost to pacman
-	/*Direction newDirection = static_cast<Direction>(rand() % 4);
-	ghost2.SetNewDirection(newDirection);*/
+	
 		Direction newDirection = CurDirect;
 		while (newDirection == CurDirect)
 		{
@@ -621,13 +616,28 @@ void Board::MoveGost2(HWND hWnd) //angree ghost - trying to catch pacman
 	}
 };
 
+
+// FUNCTION: GetCurObject(Point CheckBoxPoint)
+//
+//   PURPOSE: return object in the specified position
+//
+//   COMMENTS:
+//		in board-array x position is COLUMN! So we return [y][x], not [x][y] element
+//
 Objects Board::GetCurObject(Point CheckBoxPoint)
 {
 	int j = CheckBoxPoint.x, i = CheckBoxPoint.y;
 	return mpBoardObjects[i][j];
-}; //get object in the specified position
+}; 
 	
-void Board::DrawWall(HDC hDC, HWND hWnd, Point CurBoxPosition)
+// FUNCTION: DrawWall(HDC hDC, Point CurBoxPosition)
+//
+//   PURPOSE: draw wall on game board
+//
+//   COMMENTS:
+//		Wall - is blue box with defined size BOXSIZE 
+//
+void Board::DrawWall(HDC hDC, Point CurBoxPosition)
 {
 	HDC hdc = hDC;
 	HBRUSH hBr;
@@ -644,12 +654,17 @@ void Board::DrawWall(HDC hDC, HWND hWnd, Point CurBoxPosition)
 
 	SelectObject(hdc, hOldBr);
 	DeleteObject(hBr);
-	//DeleteObject(hOldBr);
-	//ReleaseDC(hWnd, hdc);
-
 };
 
-void Board::DrawTreasure(HDC hDC, HWND hWnd, Point CurBoxPosition)
+
+// FUNCTION: DrawTreasure(HDC hDC, Point CurBoxPosition)
+//
+//   PURPOSE: draw treasure on game board
+//
+//   COMMENTS:
+//		Treasure - is simple white point in center of  BOXSIZE 
+//
+void Board::DrawTreasure(HDC hDC, Point CurBoxPosition)
 {
 	HDC hdc = hDC;
 	HBRUSH hBr;
@@ -662,11 +677,44 @@ void Board::DrawTreasure(HDC hDC, HWND hWnd, Point CurBoxPosition)
 
 	SelectObject(hdc, hOldBr);
 	DeleteObject(hBr);
-	//DeleteObject(hOldBr);
-	//ReleaseDC(hWnd, hdc);
 };
 
-void Board::DrawStartPoint(HDC hDC, HWND hWnd, Point CurBoxPosition)
+
+// FUNCTION: DrawEmpty(HDC hDC, Point CurBoxPosition)
+//
+//   PURPOSE: draw empry box on game board
+//
+//   COMMENTS:
+//		empty box - is black rectangle with BOXSIZE 
+//
+void Board::DrawEmpty(HDC hDC, Point CurBoxPosition)
+{
+	HDC hdc = hDC;
+	HBRUSH hBr;
+	HBRUSH hOldBr;
+	hBr = CreateSolidBrush(BLACK);
+	hOldBr = (HBRUSH)SelectObject(hdc, hBr);
+
+	int x = CurBoxPosition.x*BOXSIZE,
+		y = CurBoxPosition.y*BOXSIZE,
+		x2 = x + BOXSIZE,
+		y2 = y + BOXSIZE;
+
+	Rectangle(hdc, x, y, x2, y2);
+
+	SelectObject(hdc, hOldBr);
+	DeleteObject(hBr);
+};
+
+
+// FUNCTION: DrawStartPoint(HDC hDC, Point CurBoxPosition)
+//
+//   PURPOSE: draw StartPoint on game board
+//
+//   COMMENTS:
+//		StartPoint - is green rectangle with constant size - BOXSIZE 
+//
+void Board::DrawStartPoint(HDC hDC, Point CurBoxPosition)
 {
 	HDC hdc = hDC;
 	HBRUSH hBr;
@@ -686,11 +734,17 @@ void Board::DrawStartPoint(HDC hDC, HWND hWnd, Point CurBoxPosition)
 	SelectObject(hdc, hOldPen);
 	DeleteObject(hBr);
 	DeleteObject(hPen);
-
-	//ReleaseDC(hWnd, hdc);
 };
 
-void Board::DrawExitPoint(HDC hDC, HWND hWnd, Point CurBoxPosition)
+
+// FUNCTION: DrawExitPoint(HDC hDC, Point CurBoxPosition)
+//
+//   PURPOSE: draw ExitPoint on game board
+//
+//   COMMENTS:
+//		ExitPoint - is green rectangle with white arrow in center and with constant size - BOXSIZE 
+//
+void Board::DrawExitPoint(HDC hDC, Point CurBoxPosition)
 {
 	HDC hdc = hDC;
 	HBRUSH hBr;
@@ -733,43 +787,54 @@ void Board::DrawExitPoint(HDC hDC, HWND hWnd, Point CurBoxPosition)
 	SelectObject(hdc, hOldPen);
 	DeleteObject(hBr);
 	DeleteObject(hPen);
-	
-	//ReleaseDC(hWnd, hdc);
 };
 
 
+// FUNCTION: DrawFinal(HDC hDC, HWND hWnd)
+//
+//   PURPOSE: draw final message
+//
+//   COMMENTS:
+//		if game not started, will be called function for draw start-screen
+//		if game is over, will be displayed MessageBox with congratulate or loser-screen
+//
 void Board::DrawFinal(HDC hDC, HWND hWnd)
 {
+	DrawStart(hDC, hWnd);
 	if (mpGamerStatus == WINNER)
 		DrawWinner(hDC, hWnd);
 	else
 		if (mpGamerStatus == LOSER)
-			DrawLoser(hDC, hWnd);
-		else
-			DrawStart(hDC, hWnd);
+			DrawLoser(hDC, hWnd);		
 };
-//draw winner screan with congratulation, if player win
-//now it is just message-box
+
+
+// FUNCTION: DrawWinner(HDC hDC, HWND hWnd)
+//
+//   PURPOSE: displayed winner message and generate new level board
+//
 void Board::DrawWinner(HDC hDC, HWND hWnd)
 {
-	//UpdateWindow(hWnd);
-	DrawStart(hDC, hWnd);
 	MessageBox(hWnd, (LPCTSTR)L"CONGRATULATION!! YOU ARE WINNER", (LPCWSTR)L"Game over", MB_OK);
 	NewLevelGenerate();
-	//need destoy window or draw new game after press "OK"
 }; 
 
 
-//draw loser-screen with "Game over", if player lose
+// FUNCTION: DrawWinner(HDC hDC, HWND hWnd)
+//
+//   PURPOSE: displayed loser message and generate new level board
+//
 void Board::DrawLoser(HDC hDC, HWND hWnd)
 {
-	//UpdateWindow(hWnd);
-	DrawStart(hDC, hWnd);
 	MessageBox(hWnd, (LPCTSTR)L"OH, NO! YOU ARE DIED :( ", (LPCWSTR)L"Game over", MB_OK);
 	NewLevelGenerate();
-	//need destoy window or draw new game after press "OK"
 }; 
 
+
+// FUNCTION: DrawStart(HDC hDc, HWND hWnd)
+//
+//   PURPOSE: drawing start screen with casual letters "PACMAN"
+//
 void Board::DrawStart(HDC hDc, HWND hWnd)
 {
 	HDC hdc = hDc;
@@ -971,51 +1036,28 @@ void Board::DrawStart(HDC hDc, HWND hWnd)
 	Polygon(hdc, poly3, 3);
 	SelectObject(hdc, hOldBr);
 	DeleteObject(hBr);
-	
-
-	/*SelectObject(hdc, hOldBr);
-	DeleteObject(hBr);*/
-
-	//MessageBox(hWnd, (LPCTSTR)L"Press *PLAY* to start ", (LPCWSTR)L"Welcome to Pacman!", MB_OK);
 };
 
+
+// FUNCTION: SetPacmanDirections(Direction NewDirect)
+//
+//   PURPOSE: called funtion SetNweDirection from Pacman object
+//
 void Board::SetPacmanDirections(Direction NewDirect)
 {
 	pacman.SetNewDirection(NewDirect);
 };
 
 
-
 bool Board::IsGameOn() { return mpGameOn;  };
 
-void Board::Move(HWND hWnd)
+// FUNCTION: Move()
+//
+//   PURPOSE: called all move-function for pacman and ghosts
+//
+void Board::Move()
 {
-	MovePacman(hWnd);
-	MoveGost1(hWnd);
-	MoveGost2(hWnd);
-	//MoveGhost1(hWnd);
-	//MoveGhost2(hWnd);
-	
+	MovePacman();
+	MoveGhost1();
+	MoveGhost2();
 }
-
-void Board::DrawEmpty(HDC hDC, HWND hWnd, Point CurBoxPosition)
-{
-	HDC hdc = hDC;
-	HBRUSH hBr;
-	HBRUSH hOldBr;
-	hBr = CreateSolidBrush(BLACK);
-	hOldBr = (HBRUSH)SelectObject(hdc, hBr);
-
-	int x = CurBoxPosition.x*BOXSIZE,
-		y = CurBoxPosition.y*BOXSIZE,
-		x2 = x + BOXSIZE,
-		y2 = y + BOXSIZE;
-
-	Rectangle(hdc, x, y, x2, y2);
-
-	SelectObject(hdc, hOldBr);
-	DeleteObject(hBr);
-	//DeleteObject(hOldBr);
-	//ReleaseDC(hWnd, hdc);
-
-};

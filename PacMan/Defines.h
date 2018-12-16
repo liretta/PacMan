@@ -23,6 +23,7 @@ struct PointTopLeft
 };
 
 #define TREASURECOUNTSTART 150
+#define SPEED 130
 
 
 #define BOXSIZE 40 //size of one box (square) in pixels

@@ -3,9 +3,19 @@
 #include "Ghost.h"
 #include "GameObject.h"
 
+//
 ObjectGhost::ObjectGhost()
 {};
 
+//   FUNCTION: StartInitialize(Point startBoxPosition)
+//
+//   PURPOSE: initialize start ghost's position and direction
+//
+//   COMMENTS: 
+//		start ghost position determined in Board, when initialized all game map.
+//		then that start point must be passed to this function for initialize start position.
+//		Start direction is randomly selected
+//
 void ObjectGhost::StartInitialize(Point startBoxPosition)
 {
 	mpCurBox = startBoxPosition;
@@ -16,15 +26,20 @@ void ObjectGhost::StartInitialize(Point startBoxPosition)
 	mpCurPoint = { top, left, right, bottom };
 	int tempDirection = rand() % 4; //randrom direction for chost
 	mpCurDirection = (Direction) tempDirection;
-
-	//TEST: direction 
-	//mpCurDirection = RIGHT;
-
 };
 
 ObjectGhost::~ObjectGhost() {};
 
-void ObjectGhost::Draw(HDC hDC, HWND hWnd)
+//   FUNCTION: Draw(HDC hDC)
+//
+//   PURPOSE: Draw chost-figure on passed device (HDC)
+//
+//   COMMENTS: 
+//		function gets some divece context
+//		then on this divice will be drawing ghost figure: round red head and 2 red legs
+//		all coordinates are converted from user to standard
+//
+void ObjectGhost::Draw(HDC hDC)
 {
 	HDC hdc = hDC;
 	HBRUSH hBr;
@@ -66,23 +81,28 @@ void ObjectGhost::Draw(HDC hDC, HWND hWnd)
 
 	SelectObject(hdc, hOldBr);
 	DeleteObject(hBr);
-	//ReleaseDC(hWnd, hdc);
 };
 
-//void Draw(const Point drawBoxCoordinate);
 
-//try to move ghost: 1 step in the current direction 
-//current direction is selected based on the position of pacman
-//return true if position could be changed, Return false if ghost can't move
-bool ObjectGhost::Move(Objects NextObject, Point& NewBoxPosition, bool &GameStatus, GamerStatus &gamer, HWND hWnd)
+//   FUNCTION: Move(Objects NextObject, Point& NewBoxPosition, bool &GameStatus, GamerStatus &gamer)
+//
+//   PURPOSE: try to move ghost. 1 step in the current direction
+//
+//   COMMENTS: 
+//		return true if position could be changed. Return false if ghost can't move
+		//1. check, what object there are in next ghost's position in current directions
+		//2. if there is threasure in the next position : change ghost coordinate to the next box
+		//new ghost's box in mpBoard must assigned as ghost+threasure 
+		//it is necessary that the ghost does not eat the treasure and we could draw it after the ghost leaves
+		//3. if there is ghost1 or ghost2, ghost+treasure in the next position - ignore, update window withour change position
+		//4. if there is start-point in the next position, move ghost to another side of this line - one step to exit point
+		//5. if there is exit-point in the next position, move ghost to another side of this line - one step to start point
+		//6. if wall - just update window
+		//7. if pacman = change game and gamer status. Game is over, gamer is loser
+//
+bool ObjectGhost::Move(Objects NextObject, Point& NewBoxPosition, bool &GameStatus, GamerStatus &gamer)
 {
-	//1. check, what object there are in next chost's position in current directions
-	//2. in switch:
-	//2.1 if threasure: assign new position to chost, in mpBoard assign new position as ghost+threasure 
-	//3.2 if ghost1, ghost2, ghost+treasure -//- = ignore, update window withour change position
-	//3.3 if start-point - check, if threasure !=0, new paxcam position = exitpoint-1
-	//4.if wall - just update window
-	//5.if pacman =draw loser
+	
 	switch (NextObject)
 	{
 	case EMPTY:
@@ -109,7 +129,6 @@ bool ObjectGhost::Move(Objects NextObject, Point& NewBoxPosition, bool &GameStat
 		return false;
 	break;
 	case GHOST2:
-		//need destoy window or draw new game after press "OK" 
 		return false;
 	break;
 	case WALL:
@@ -123,7 +142,7 @@ bool ObjectGhost::Move(Objects NextObject, Point& NewBoxPosition, bool &GameStat
 	break;
 	case STARTPOINT:
 	{
-		//pacman stay on same line, but moving to the another side of this line,
+		//ghost stay on the same line, but moving to the another side of this line,
 		mpCurBox.x = BOARDWIDTH - 2;
 		mpCurPoint.top = mpCurBox.x*BOXSIZE; //current coordinate in pixel
 		mpCurPoint.left = mpCurBox.y*BOXSIZE;
@@ -134,7 +153,7 @@ bool ObjectGhost::Move(Objects NextObject, Point& NewBoxPosition, bool &GameStat
 	break;
 	case EXITPOINT:
 	{
-		mpCurBox.x = 1; //pacman stay on same line, but moving to the another side of this line,
+		mpCurBox.x = 1; //ghost stay on same line, but moving to the another side of this line,
 		mpCurPoint.top = mpCurBox.x*BOXSIZE; //current coordinate in pixel
 		mpCurPoint.left = mpCurBox.y*BOXSIZE;
 		mpCurPoint.right = mpCurPoint.left + BOXSIZE;
@@ -146,7 +165,6 @@ bool ObjectGhost::Move(Objects NextObject, Point& NewBoxPosition, bool &GameStat
 	{
 		gamer = LOSER;
 		GameStatus = false;
-		//MessageBox(hWnd, (LPCTSTR)L"OH, NO! YOU ARE DIED :( ", (LPCWSTR)L"Game over", MB_OK);
 		return false;
 	}
 	default:
@@ -154,8 +172,6 @@ bool ObjectGhost::Move(Objects NextObject, Point& NewBoxPosition, bool &GameStat
 	}
 	return false;
 }
-
-//void Turn(){}; //posible, function must take key-code
 
 
 
