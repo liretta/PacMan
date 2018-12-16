@@ -331,6 +331,64 @@ void Board::Draw(HDC hDC, HWND hWnd)
 
 };
 
+//TEST! Try to paint to the bitmap. Not worked!!
+//void Board::Draw(HDC hDC, HWND hWnd)
+//{
+//	HDC hdc = hDC;
+//	HDC hMemDc = CreateCompatibleDC(hdc);
+//
+//	//TODO: check winner/lose
+//	//
+//
+//	for (int i = 0; i<BOARDHEIGHT; ++i)
+//		for (int j = 0; j < BOARDWIDTH; ++j)
+//		{
+//			switch (mpBoardObjects[i][j])
+//			{
+//			case WALL:
+//			{
+//				DrawWall(hMemDc, hWnd, { j, i });
+//			}
+//			break;
+//			case EMPTY:
+//				DrawEmpty(hMemDc, hWnd, { j,i });
+//				break;
+//			case PACMAN:
+//				pacman.Draw(hMemDc, hWnd);
+//				break;
+//			case GHOST1:
+//				ghost1.Draw(hMemDc, hWnd);
+//				break;
+//			case GHOST1TREASURE:
+//				ghost1.Draw(hMemDc, hWnd);
+//				break;
+//			case GHOST2:
+//				ghost2.Draw(hMemDc, hWnd);
+//				break;
+//			case GHOST2TREASURE:
+//				ghost2.Draw(hMemDc, hWnd);
+//				break;
+//			case TREASURE:
+//				DrawTreasure(hMemDc, hWnd, { j, i });
+//				break;
+//			case STARTPOINT:
+//				DrawStartPoint(hMemDc, hWnd, { j, i });
+//				break;
+//			case EXITPOINT:
+//				DrawExitPoint(hMemDc, hWnd, { j,i });
+//				break;
+//			default:
+//				break;
+//			}
+//		}
+//	BitBlt(hdc, 0, 0, BOARDWIDTH, BOARDHEIGHT, hMemDc, 0, 0, SRCCOPY);
+//	DeleteDC(hMemDc);
+//	ReleaseDC(hWnd, hdc);
+//
+//};
+
+
+
 //pass result of checkCurObject to pacman's move-function
 void Board::MovePacman(HWND hWnd)
 {
