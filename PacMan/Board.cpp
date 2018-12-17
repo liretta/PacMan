@@ -305,6 +305,7 @@ void Board::NewLevelGenerate()
 	ghost1.StartInitialize(startGoust1Position);
 	ghost2.StartInitialize(startGoust2Position);
 	mpGamerStatus = START;
+	mpGameOn = false;
 
 }
 
@@ -375,8 +376,6 @@ void Board::Draw(HDC hDC, HWND hWnd)
 				break;
 			}
 		}
-	//ReleaseDC(hdc);
-
 };
 
 
@@ -624,10 +623,9 @@ void Board::MoveGhost2()
 //   COMMENTS:
 //		in board-array x position is COLUMN! So we return [y][x], not [x][y] element
 //
-Objects Board::GetCurObject(Point CheckBoxPoint)
+Objects Board::GetCurObject (Point CheckBoxPoint) const
 {
-	int j = CheckBoxPoint.x, i = CheckBoxPoint.y;
-	return mpBoardObjects[i][j];
+	return mpBoardObjects[CheckBoxPoint.y][CheckBoxPoint.x];
 }; 
 	
 // FUNCTION: DrawWall(HDC hDC, Point CurBoxPosition)
@@ -800,12 +798,18 @@ void Board::DrawExitPoint(HDC hDC, Point CurBoxPosition)
 //
 void Board::DrawFinal(HDC hDC, HWND hWnd)
 {
-	DrawStart(hDC, hWnd);
+	
 	if (mpGamerStatus == WINNER)
+	{
 		DrawWinner(hDC, hWnd);
+	}
 	else
 		if (mpGamerStatus == LOSER)
-			DrawLoser(hDC, hWnd);		
+		{
+			DrawLoser(hDC, hWnd);
+		}
+		else 
+			DrawStart(hDC, hWnd);
 };
 
 
@@ -815,19 +819,230 @@ void Board::DrawFinal(HDC hDC, HWND hWnd)
 //
 void Board::DrawWinner(HDC hDC, HWND hWnd)
 {
+	
 	MessageBox(hWnd, (LPCTSTR)L"CONGRATULATION!! YOU ARE WINNER", (LPCWSTR)L"Game over", MB_OK);
 	NewLevelGenerate();
+
 }; 
 
 
-// FUNCTION: DrawWinner(HDC hDC, HWND hWnd)
+// FUNCTION: DrawLoser(HDC hDC, HWND hWnd)
 //
-//   PURPOSE: displayed loser message and generate new level board
+//   PURPOSE: displayed loser screen and generate new level board
 //
 void Board::DrawLoser(HDC hDC, HWND hWnd)
 {
-	MessageBox(hWnd, (LPCTSTR)L"OH, NO! YOU ARE DIED :( ", (LPCWSTR)L"Game over", MB_OK);
-	NewLevelGenerate();
+	HDC hdc = hDC;
+	HBRUSH hBr;
+	HBRUSH hOldBr;
+	hBr = CreateSolidBrush(YELLOW);
+	hOldBr = (HBRUSH)SelectObject(hdc, hBr);
+
+	//draw word "YOU LOSE"
+	//"Y"
+	///////////////////////////////////////////
+	int x = 3 * BOXSIZE, y = 3 * BOXSIZE,
+		x2 = x + BOXSIZE,
+		y2 = y + BOXSIZE;
+	for (int i = 0; i < 3; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+
+	x = 5 * BOXSIZE; y = 3 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 0; i < 3; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+
+	x = 4 * BOXSIZE; y = 5 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 0; i < 3; ++i)
+	{
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+		Rectangle(hdc, x, y, x2, y2);
+	}
+
+	//"O"
+	///////////////////////////////////////////
+	x = 8 * BOXSIZE; y = 3 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	x = 8 * BOXSIZE; y = 8 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	x =  7* BOXSIZE; y = 4 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 0; i < 4; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+
+	x = 9 * BOXSIZE; y = 4 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 0; i < 4; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+
+
+	//"U"
+	///////////////////////////////////////////
+	x = 11 * BOXSIZE; y = 3 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 0; i < 5; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+
+	x = 13 * BOXSIZE; y = 3 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 0; i < 5; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+
+	x = 12 * BOXSIZE; y = 8 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+
+	//"L"
+	///////////////////////////////////////////
+	x = 2 * BOXSIZE; y = 11 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 0; i < 5; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+
+	x = 3 * BOXSIZE; y = 15 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	x = 4 * BOXSIZE; y = 15 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	//"O"
+	///////////////////////////////////////////
+	x = 7 * BOXSIZE; y = 11 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	x = 7 * BOXSIZE; y = 15 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	x = 6 * BOXSIZE; y = 12 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 0; i < 3; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+
+	x = 8 * BOXSIZE; y = 12 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 0; i < 3; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		y += BOXSIZE;
+		y2 = y + BOXSIZE;
+	}
+
+	//"S"
+	///////////////////////////////////////////
+	x = 10 * BOXSIZE; y = 11 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 0; i < 3; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		x += BOXSIZE;
+		x2 = x + BOXSIZE;
+	}
+
+	x = 10 * BOXSIZE; y = 15 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 0; i < 3; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		x += BOXSIZE;
+		x2 = x + BOXSIZE;
+	}
+
+	x = 10 * BOXSIZE; y = 12 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	x = 11 * BOXSIZE; y = 13 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	x = 12 * BOXSIZE; y = 14 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+	
+	//"E"
+	///////////////////////////////////////////
+	x = 15 * BOXSIZE; y = 11 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 0; i < 3; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		x += BOXSIZE;
+		x2 = x + BOXSIZE;
+	}
+
+	x = 15 * BOXSIZE; y = 12 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	x = 15 * BOXSIZE; y = 13 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 0; i < 3; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		x += BOXSIZE;
+		x2 = x + BOXSIZE;
+	}
+
+	x = 15 * BOXSIZE; y = 14 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	Rectangle(hdc, x, y, x2, y2);
+
+	x = 15 * BOXSIZE; y = 15 * BOXSIZE;
+	x2 = x + BOXSIZE; y2 = y + BOXSIZE;
+	for (int i = 0; i < 3; ++i)
+	{
+		Rectangle(hdc, x, y, x2, y2);
+		x += BOXSIZE;
+		x2 = x + BOXSIZE;
+	}
+
+	SelectObject(hdc, hOldBr);
+	DeleteObject(hBr);
+	
+	NewLevelGenerate();	
 }; 
 
 
@@ -1049,7 +1264,7 @@ void Board::SetPacmanDirections(Direction NewDirect)
 };
 
 
-bool Board::IsGameOn() { return mpGameOn;  };
+bool Board::IsGameOn() const { return mpGameOn;  };
 
 // FUNCTION: Move()
 //

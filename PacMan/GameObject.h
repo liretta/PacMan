@@ -12,9 +12,9 @@ public:
 	GameObject() {};
 	virtual ~GameObject() {};
 	virtual void StartInitialize(Point StartBoxPosition) {};
-	Direction GetCurDirection() { return mpCurDirection;};
-	Point GetCurBox() { return mpCurBox; };
-	PointTopLeft GetCurCoordinate() { return mpCurPoint; };
+	Direction GetCurDirection() const { return mpCurDirection;};
+	Point GetCurBox() const { return mpCurBox; };
+	PointTopLeft GetCurCoordinate() const { return mpCurPoint; };
 	void SetNewDirection(const Direction NewDirection) { mpCurDirection = NewDirection; };
 	virtual void Draw(HDC hDC)=0;
 };

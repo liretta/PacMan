@@ -37,14 +37,14 @@ public:
 	Board();
 	~Board();
 	void StartGame();
-	bool IsGameOn();
+	bool IsGameOn() const;
 	void NewLevelGenerate(); //method for generate new labirint on board in future. Now method body equals StartBoardInit+Constructor
 	void Draw(HDC hDC, HWND hWnd);
 	void DrawFinal(HDC hDC, HWND hWnd);
 	void SetPacman(Point NewBoxPoint) {}; //set new pacman location
 	void SetPacmanDirections(Direction NewDirect); //set new pacman direction after key-pressed
 	void SetGhost(int GoustNumber, Point NewBoxPoint) {}; //set new ghost position
-	Objects GetCurObject(Point CheckBoxPoint); //get object in the specified position
+	Objects GetCurObject(Point CheckBoxPoint) const; //get object in the specified position
 	void Move();//MOVE ALL
 };
 
