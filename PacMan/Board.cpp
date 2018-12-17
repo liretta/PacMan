@@ -166,8 +166,7 @@ void Board::InitStartBoard(Point &startPacmanPosition, Point &startGhost1Positio
 	mpBoardObjects[9][6] = EMPTY;
 	mpBoardObjects[9][7] = WALL;
 	mpBoardObjects[9][8] = EMPTY;
-	mpBoardObjects[9][9] = GHOST2;
-	startGhost2POsition = { 9,9 };
+	mpBoardObjects[9][9] = EMPTY;
 	mpBoardObjects[9][10] = EMPTY;
 	mpBoardObjects[9][11] = WALL;
 	mpBoardObjects[9][12] = EMPTY;
@@ -192,6 +191,11 @@ void Board::InitStartBoard(Point &startPacmanPosition, Point &startGhost1Positio
 	//12 line
 	for (int j = 0; j < BOARDWIDTH;++j)
 	{
+		if (9 == j)
+		{
+			mpBoardObjects[11][j] = GHOST2;
+			startGhost2POsition = { j,11 };
+		}
 		if (3 == j || 5 == j || 13 == j || 15 == j)
 			mpBoardObjects[11][j] = WALL;
 		else
@@ -819,10 +823,9 @@ void Board::DrawFinal(HDC hDC, HWND hWnd)
 //
 void Board::DrawWinner(HDC hDC, HWND hWnd)
 {
-	
 	MessageBox(hWnd, (LPCTSTR)L"CONGRATULATION!! YOU ARE WINNER", (LPCWSTR)L"Game over", MB_OK);
 	NewLevelGenerate();
-
+	DrawStart(hDC, hWnd);
 }; 
 
 

@@ -24,8 +24,9 @@ void ObjectGhost::StartInitialize(Point startBoxPosition)
 	int right = left + BOXSIZE;
 	int bottom = top + BOXSIZE;
 	mpCurPoint = { top, left, right, bottom };
-	int tempDirection = rand() % 4; //randrom direction for chost
-	mpCurDirection = (Direction) tempDirection;
+	mpCurDirection = DOWN;
+	//int tempDirection = rand() % 4; //randrom direction for chost
+	//mpCurDirection = (Direction) tempDirection;
 };
 
 ObjectGhost::~ObjectGhost() {};
