@@ -1,5 +1,6 @@
 # About PacMan
 It is a simple version of game PacMan (1 lvl) with using WIN API. 
+Here you can see short [demo-video](https://www.youtube.com/watch?v=llK8ZSHnI2E)
 
 ## How it works
 
